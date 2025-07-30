@@ -2,16 +2,14 @@
 #include <PS4Controller.h>
 
 // Motores Ponte H
-#define IN1 2 // Motor esquerdo
-#define IN2 3
-#define IN3 4 // Motor direito
-#define IN4 5
+#define IN1 12 // Motor esquerdo
+#define IN2 13
+#define IN3 14 // Motor direito
+#define IN4 27
 
 // Arma
-#define WEAPON_PIN 6 // Motor 1 da arma
-#define WEAPON_PIN2 7
-#define WEAPON_PIN3 8 // Motor 2 da arma
-#define WEAPON_PIN4 9
+#define WEAPON_PIN 25  // Motor 1 da arma
+#define WEAPON_PIN2 26 // Motor 2 da arma
 
 bool isWeaponActive = false;
 unsigned long weaponTimer = 0;
@@ -98,8 +96,6 @@ void updateWeaponState()
 {
   digitalWrite(WEAPON_PIN, isWeaponActive ? HIGH : LOW);
   digitalWrite(WEAPON_PIN2, isWeaponActive ? LOW : HIGH);
-  digitalWrite(WEAPON_PIN3, isWeaponActive ? HIGH : LOW);
-  digitalWrite(WEAPON_PIN4, isWeaponActive ? LOW : HIGH);
 }
 
 /*
@@ -175,36 +171,44 @@ void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
   int ly = PS4.LStickY();
   int deadzone = 60; // Zona morta do analógico
 
-  if (ly < -deadzone && lx > deadzone)
+  if (ly > deadzone && lx > deadzone)
   {
+    Serial.println("Analogico Direita Cima");
     curveForwardRight();
-  }
-  else if (ly < -deadzone && lx < -deadzone)
-  {
-    curveForwardLeft();
-  }
-  else if (ly > deadzone && lx > deadzone)
-  {
-    curveBackwardRight();
   }
   else if (ly > deadzone && lx < -deadzone)
   {
-    curveBackwardLeft();
+    Serial.println("Analogico Esquerda Cima");
+    curveForwardLeft();
   }
-  else if (ly < -deadzone)
+  else if (ly < -deadzone && lx > deadzone)
   {
-    moveForward();
+    Serial.println("Analogico Direita Tras");
+    curveBackwardRight();
+  }
+  else if (ly < -deadzone && lx < -deadzone)
+  {
+    Serial.println("Analogico Esquerda Tras");
+    curveBackwardLeft();
   }
   else if (ly > deadzone)
   {
+    Serial.println("Analogico Frente");
+    moveForward();
+  }
+  else if (ly < -deadzone)
+  {
+    Serial.println("Analogico Tras");
     moveBackward();
   }
   else if (lx > deadzone)
   {
+    Serial.println("Analogico Direita");
     turnRight();
   }
   else if (lx < -deadzone)
   {
+    Serial.println("Analogico Esquerda");
     turnLeft();
   }
   else
@@ -217,6 +221,7 @@ void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
     unsigned int newTimer = millis();
     if (newTimer - weaponTimer > 300)
     {
+      Serial.println("Bolinha!!!");
       isWeaponActive = !isWeaponActive;
       updateWeaponState();
       weaponTimer = millis();
@@ -226,6 +231,7 @@ void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
 
 void setup()
 {
+
   Serial.begin(115200);
 
   // Pinos dos motores
@@ -237,12 +243,16 @@ void setup()
   // Pinos da arma
   pinMode(WEAPON_PIN, OUTPUT);
   pinMode(WEAPON_PIN2, OUTPUT);
-  pinMode(WEAPON_PIN3, OUTPUT);
-  pinMode(WEAPON_PIN4, OUTPUT);
+
   updateWeaponState();
 
   // Inicializar controle de PS4
-  while (!PS4.begin("colocar codigo MAC aqui ex: 00:1A:7D:DA:71:13 "))
+  if (PS4.begin("18:1d:ea:f4:17:5c"))
+  {
+    Serial.println("Controle conectado!");
+  }
+
+  while (!PS4.begin("18:1d:ea:f4:17:5c"))
   {
     Serial.println("Erro ao iniciar Bluetooth do PS4");
     delay(3000);
