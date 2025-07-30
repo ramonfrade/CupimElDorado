@@ -93,12 +93,12 @@ void curvaTrasEsquerda()
 
 // Funçao da arma
 
-void estadoDaArma(bool ativar)
+void estadoDaArma(bool ativado)
 {
-  digitalWrite(ARMA_PIN, ativar ? HIGH : LOW);
-  digitalWrite(ARMA_PIN2, ativar ? HIGH : LOW);
-  digitalWrite(ARMA_PIN3, ativar ? HIGH : LOW);
-  digitalWrite(ARMA_PIN4, ativar ? HIGH : LOW);
+  digitalWrite(ARMA_PIN, ativado ? HIGH : LOW);
+  digitalWrite(ARMA_PIN2, ativado ? HIGH : LOW);
+  digitalWrite(ARMA_PIN3, ativado ? HIGH : LOW);
+  digitalWrite(ARMA_PIN4, ativado ? HIGH : LOW);
 }
 
 /*
