@@ -97,9 +97,9 @@ void curveBackwardLeft()
 void updateWeaponState()
 {
   digitalWrite(WEAPON_PIN, isWeaponActive ? HIGH : LOW);
-  digitalWrite(WEAPON_PIN2, isWeaponActive ? HIGH : LOW);
+  digitalWrite(WEAPON_PIN2, isWeaponActive ? LOW : HIGH);
   digitalWrite(WEAPON_PIN3, isWeaponActive ? HIGH : LOW);
-  digitalWrite(WEAPON_PIN4, isWeaponActive ? HIGH : LOW);
+  digitalWrite(WEAPON_PIN4, isWeaponActive ? LOW : HIGH);
 }
 
 /*
