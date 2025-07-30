@@ -94,12 +94,12 @@ void curveBackwardLeft()
 
 // Funçao da arma
 
-void weaponState(bool activated)
+void weaponState()
 {
-  digitalWrite(WEAPON_PIN, activated ? HIGH : LOW);
-  digitalWrite(WEAPON_PIN2, activated ? HIGH : LOW);
-  digitalWrite(WEAPON_PIN3, activated ? HIGH : LOW);
-  digitalWrite(WEAPON_PIN4, activated ? HIGH : LOW);
+  digitalWrite(WEAPON_PIN, isWeaponActive ? HIGH : LOW);
+  digitalWrite(WEAPON_PIN2, isWeaponActive ? HIGH : LOW);
+  digitalWrite(WEAPON_PIN3, isWeaponActive ? HIGH : LOW);
+  digitalWrite(WEAPON_PIN4, isWeaponActive ? HIGH : LOW);
 }
 
 /*
@@ -158,7 +158,7 @@ void onPS4data()  // USAR ESSA FUNÇAO PARA MOVIMENTAR COM DPAD
     if (newTimer - weaponTimer > 300)
     {
     isWeaponActive = !isWeaponActive;
-    weaponState(isWeaponActive);
+    weaponState();
     weaponTimer = millis();
     }
   }
@@ -218,7 +218,7 @@ void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
     if (newTimer - weaponTimer > 300)
     {
     isWeaponActive = !isWeaponActive;
-    weaponState(isWeaponActive);
+    weaponState();
     weaponTimer = millis();
     }
   }
@@ -239,7 +239,6 @@ void setup()
   pinMode(WEAPON_PIN2, OUTPUT);
   pinMode(WEAPON_PIN3, OUTPUT);
   pinMode(WEAPON_PIN4, OUTPUT);
-  weaponState(false);
 
   // Inicializar controle de PS4
   while (!PS4.begin("colocar codigo MAC aqui ex: 00:1A:7D:DA:71:13 "))
