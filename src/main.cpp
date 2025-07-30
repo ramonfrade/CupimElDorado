@@ -14,6 +14,7 @@
 #define WEAPON_PIN4 9
 
 bool isWeaponActive = false;
+unsigned long weaponTimer = 0;
 
 // Funçoes de movimento do robo
 
@@ -103,7 +104,6 @@ void weaponState(bool activated)
 
 /*
 
-unsigned long weapon_timer = 0;
 void onPS4data()  // USAR ESSA FUNÇAO PARA MOVIMENTAR COM DPAD
 {
   // =======================================================
@@ -154,12 +154,12 @@ void onPS4data()  // USAR ESSA FUNÇAO PARA MOVIMENTAR COM DPAD
 
   if (PS4.Circle())
   {
-    unsigned int new_timer = millis();
-    if (new_timer - weapon_timer > 300)
+    unsigned int newTimer = millis();
+    if (newTimer - weaponTimer > 300)
     {
     isWeaponActive = !isWeaponActive;
     weaponState(isWeaponActive);
-    weapon_timer = millis();
+    weaponTimer = millis();
     }
   }
 }
@@ -167,7 +167,7 @@ void onPS4data()  // USAR ESSA FUNÇAO PARA MOVIMENTAR COM DPAD
 */
 
 // Controle PS4
-unsigned long weapon_timer = 0;
+
 void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
 {
   // Logica de movimento dentro de onPS4data()
@@ -214,12 +214,12 @@ void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
 
   if (PS4.Circle())
   {
-    unsigned int new_timer = millis();
-    if (new_timer - weapon_timer > 300)
+    unsigned int newTimer = millis();
+    if (newTimer - weaponTimer > 300)
     {
     isWeaponActive = !isWeaponActive;
     weaponState(isWeaponActive);
-    weapon_timer = millis();
+    weaponTimer = millis();
     }
   }
 }
