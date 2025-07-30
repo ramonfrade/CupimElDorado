@@ -13,7 +13,7 @@
 #define ARMA_PIN3 8 // Motor 2 da arma
 #define ARMA_PIN4 9
 
-bool arma_ativa = false;
+bool arma_ativada = false;
 
 // Funçoes de movimento do robo
 
@@ -93,7 +93,7 @@ void curvaTrasEsquerda()
 
 // Funçao da arma
 
-void ativarArma(bool ativar)
+void estadoDaArma(bool ativar)
 {
   digitalWrite(ARMA_PIN, ativar ? HIGH : LOW);
   digitalWrite(ARMA_PIN2, ativar ? HIGH : LOW);
@@ -153,8 +153,8 @@ void onPS4data()  // USAR ESSA FUNÇAO PARA MOVIMENTAR COM DPAD
 
   if (PS4.Circle())
   {
-    arma_ativa = !arma_ativa;
-    ativarArma(arma_ativa);
+    arma_ativada = !arma_ativada;
+    estadoDaArma(arma_ativada);
     delay(300);
   }
 }
@@ -168,7 +168,7 @@ void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
   // Logica de movimento dentro de onPS4data()
   int lx = PS4.LStickX();
   int ly = PS4.LStickY();
-  int deadzone = 30; // Zona morta do analógico
+  int deadzone = 60; // Zona morta do analógico
 
   if (ly < -deadzone && lx > deadzone)
   {
@@ -201,8 +201,8 @@ void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
 
   if (PS4.Circle())
   {
-    arma_ativa = !arma_ativa;
-    ativarArma(arma_ativa);
+    arma_ativada = !arma_ativada;
+    estadoDaArma(arma_ativada);
     delay(300);
   }
 }
@@ -222,14 +222,13 @@ void setup()
   pinMode(ARMA_PIN2, OUTPUT);
   pinMode(ARMA_PIN3, OUTPUT);
   pinMode(ARMA_PIN4, OUTPUT);
-  ativarArma(false);
+  estadoDaArma(false);
 
   // Inicializar controle de PS4
-  if (!PS4.begin("colocar codigo MAC aqui ex: 00:1A:7D:DA:71:13 "))
+  while (!PS4.begin("colocar codigo MAC aqui ex: 00:1A:7D:DA:71:13 "))
   {
     Serial.println("Erro ao iniciar Bluetooth do PS4");
-    while (1)
-      ;
+    delay(3000);
   }
 
   PS4.setLed(0, 0, 255); // Define a cor para azul
