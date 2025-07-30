@@ -178,6 +178,14 @@ void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
   {
     curvaFrenteEsquerda();
   }
+  else if (ly > deadzone && lx > deadzone)
+  {
+    curvaTrasDireita();
+  }
+  else if (ly > deadzone && lx < -deadzone)
+  {
+    curvaTrasEsquerda();
+  }
   else if (ly < -deadzone)
   {
     frente();
