@@ -157,9 +157,9 @@ void onPS4data()  // USAR ESSA FUNÇAO PARA MOVIMENTAR COM DPAD
     unsigned int newTimer = millis();
     if (newTimer - weaponTimer > 300)
     {
-    isWeaponActive = !isWeaponActive;
-    updateWeaponState();
-    weaponTimer = millis();
+      isWeaponActive = !isWeaponActive;
+      updateWeaponState();
+      weaponTimer = millis();
     }
   }
 }
@@ -217,9 +217,9 @@ void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
     unsigned int newTimer = millis();
     if (newTimer - weaponTimer > 300)
     {
-    isWeaponActive = !isWeaponActive;
-    updateWeaponState();
-    weaponTimer = millis();
+      isWeaponActive = !isWeaponActive;
+      updateWeaponState();
+      weaponTimer = millis();
     }
   }
 }
