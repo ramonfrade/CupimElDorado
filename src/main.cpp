@@ -8,16 +8,16 @@
 #define IN4 5
 
 // Arma
-#define ARMA_PIN 6 // Motor 1 da arma
-#define ARMA_PIN2 7
-#define ARMA_PIN3 8 // Motor 2 da arma
-#define ARMA_PIN4 9
+#define WEAPON_PIN 6 // Motor 1 da arma
+#define WEAPON_PIN2 7
+#define WEAPON_PIN3 8 // Motor 2 da arma
+#define WEAPON_PIN4 9
 
-bool arma_ativada = false;
+bool isWeaponActive = false;
 
 // Funçoes de movimento do robo
 
-void parar()
+void stopRobot()
 {
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, LOW);
@@ -25,7 +25,7 @@ void parar()
   digitalWrite(IN4, LOW);
 }
 
-void frente()
+void moveForward()
 {
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
@@ -33,7 +33,7 @@ void frente()
   digitalWrite(IN4, LOW);
 }
 
-void tras()
+void moveBackward()
 {
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, HIGH);
@@ -41,7 +41,7 @@ void tras()
   digitalWrite(IN4, HIGH);
 }
 
-void esquerda()
+void turnLeft()
 {
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, HIGH);
@@ -49,7 +49,7 @@ void esquerda()
   digitalWrite(IN4, LOW);
 }
 
-void direita()
+void turnRight()
 {
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
@@ -59,7 +59,7 @@ void direita()
 
 // Funçoes de movimentos na diagonal
 
-void curvaFrenteDireita()
+void curveForwardRight()
 {
   digitalWrite(IN1, HIGH); // Motor esquerdo para frente
   digitalWrite(IN2, LOW);
@@ -67,7 +67,7 @@ void curvaFrenteDireita()
   digitalWrite(IN4, LOW);
 }
 
-void curvaFrenteEsquerda()
+void curveForwardLeft()
 {
   digitalWrite(IN1, LOW); // Motor esquerdo parado
   digitalWrite(IN2, LOW);
@@ -75,7 +75,7 @@ void curvaFrenteEsquerda()
   digitalWrite(IN4, LOW);
 }
 
-void curvaTrasDireita()
+void curveBackwardRight()
 {
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, HIGH); // Motor esquerdo para trás
@@ -83,7 +83,7 @@ void curvaTrasDireita()
   digitalWrite(IN4, LOW);
 }
 
-void curvaTrasEsquerda()
+void curveBackwardLeft()
 {
   digitalWrite(IN1, LOW); // Motor esquerdo parado
   digitalWrite(IN2, LOW);
@@ -93,16 +93,17 @@ void curvaTrasEsquerda()
 
 // Funçao da arma
 
-void estadoDaArma(bool ativado)
+void weaponState(bool activated)
 {
-  digitalWrite(ARMA_PIN, ativado ? HIGH : LOW);
-  digitalWrite(ARMA_PIN2, ativado ? HIGH : LOW);
-  digitalWrite(ARMA_PIN3, ativado ? HIGH : LOW);
-  digitalWrite(ARMA_PIN4, ativado ? HIGH : LOW);
+  digitalWrite(WEAPON_PIN, activated ? HIGH : LOW);
+  digitalWrite(WEAPON_PIN2, activated ? HIGH : LOW);
+  digitalWrite(WEAPON_PIN3, activated ? HIGH : LOW);
+  digitalWrite(WEAPON_PIN4, activated ? HIGH : LOW);
 }
 
 /*
 
+unsigned long weapon_timer = 0;
 void onPS4data()  // USAR ESSA FUNÇAO PARA MOVIMENTAR COM DPAD
 {
   // =======================================================
@@ -110,59 +111,63 @@ void onPS4data()  // USAR ESSA FUNÇAO PARA MOVIMENTAR COM DPAD
   // =======================================================
 
   // Checa primeiro as diagonais (quando dois botões são pressionados ao mesmo tempo)
-  if (PS4.Up() && PS4.Right())
+  if (PS4.moveForward() && PS4.turnRight())
   {
-    curvaFrenteDireita();
+    curveForwardRight();
   }
-  else if (PS4.Up() && PS4.Left())
+  else if (PS4.moveForward() && PS4.turnLeft())
   {
-    curvaFrenteEsquerda();
+    curveForwardLeft();
   }
-  else if (PS4.Down() && PS4.Right())
+  else if (PS4.moveBackward() && PS4.turnRight())
   {
-    curvaTrasDireita();
+    curveBackwardRight();
   }
-  else if (PS4.Down() && PS4.Left())
+  else if (PS4.moveBackward() && PS4.turnLeft())
   {
-    curvaTrasEsquerda();
+    curveBackwardLeft();
   }
 
   // Se não for uma diagonal, checa as direções retas
-  else if (PS4.Up())
+  else if (PS4.moveForward())
   {
-    frente();
+    moveForward();
   }
-  else if (PS4.Down())
+  else if (PS4.moveBackward())
   {
-    tras();
+    moveBackward();
   }
-  else if (PS4.Right())
+  else if (PS4.turnRight())
   {
-    direita();
+    turnRight();
   }
-  else if (PS4.Left())
+  else if (PS4.turnLeft())
   {
-    esquerda();
+    turnLeft();
   }
 
   // Se nenhum botão de direção do D-pad estiver pressionado, para o robô
   else
   {
-    parar();
+    stopRobot();
   }
 
   if (PS4.Circle())
   {
-    arma_ativada = !arma_ativada;
-    estadoDaArma(arma_ativada);
-    delay(300);
+    unsigned int new_timer = millis();
+    if (new_timer - weapon_timer > 300)
+    {
+    isWeaponActive = !isWeaponActive;
+    weaponState(isWeaponActive);
+    weapon_timer = millis();
+    }
   }
 }
 
 */
 
 // Controle PS4
-
+unsigned long weapon_timer = 0;
 void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
 {
   // Logica de movimento dentro de onPS4data()
@@ -172,46 +177,50 @@ void onPS4data() // USAR ESSA FUNCAO PARA MOVIMENTAR COM ANALOGICO
 
   if (ly < -deadzone && lx > deadzone)
   {
-    curvaFrenteDireita();
+    curveForwardRight();
   }
   else if (ly < -deadzone && lx < -deadzone)
   {
-    curvaFrenteEsquerda();
+    curveForwardLeft();
   }
   else if (ly > deadzone && lx > deadzone)
   {
-    curvaTrasDireita();
+    curveBackwardRight();
   }
   else if (ly > deadzone && lx < -deadzone)
   {
-    curvaTrasEsquerda();
+    curveBackwardLeft();
   }
   else if (ly < -deadzone)
   {
-    frente();
+    moveForward();
   }
   else if (ly > deadzone)
   {
-    tras();
+    moveBackward();
   }
   else if (lx > deadzone)
   {
-    direita();
+    turnRight();
   }
   else if (lx < -deadzone)
   {
-    esquerda();
+    turnLeft();
   }
   else
   {
-    parar();
+    stopRobot();
   }
 
   if (PS4.Circle())
   {
-    arma_ativada = !arma_ativada;
-    estadoDaArma(arma_ativada);
-    delay(300);
+    unsigned int new_timer = millis();
+    if (new_timer - weapon_timer > 300)
+    {
+    isWeaponActive = !isWeaponActive;
+    weaponState(isWeaponActive);
+    weapon_timer = millis();
+    }
   }
 }
 
@@ -226,11 +235,11 @@ void setup()
   pinMode(IN4, OUTPUT);
 
   // Pinos da arma
-  pinMode(ARMA_PIN, OUTPUT);
-  pinMode(ARMA_PIN2, OUTPUT);
-  pinMode(ARMA_PIN3, OUTPUT);
-  pinMode(ARMA_PIN4, OUTPUT);
-  estadoDaArma(false);
+  pinMode(WEAPON_PIN, OUTPUT);
+  pinMode(WEAPON_PIN2, OUTPUT);
+  pinMode(WEAPON_PIN3, OUTPUT);
+  pinMode(WEAPON_PIN4, OUTPUT);
+  weaponState(false);
 
   // Inicializar controle de PS4
   while (!PS4.begin("colocar codigo MAC aqui ex: 00:1A:7D:DA:71:13 "))
