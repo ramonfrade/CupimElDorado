@@ -1,15 +1,17 @@
 #include <Arduino.h>
 #include <PS4Controller.h>
 
-// Motores Ponte H
+// Motores Locomoçao
 #define IN1 12 // Motor esquerdo
 #define IN2 13
 #define IN3 14 // Motor direito
 #define IN4 27
 
 // Arma
-#define WEAPON_PIN 25  // Motor 1 da arma
-#define WEAPON_PIN2 26 // Motor 2 da arma
+#define WEAPON_PIN 25
+#define WEAPON_PIN2 26
+
+#define FAILSAFE_LED 2 // Pino do Led
 
 bool isWeaponActive = false;
 unsigned long weaponTimer = 0;
@@ -234,6 +236,10 @@ void setup()
 
   Serial.begin(115200);
 
+  // Pinos Dos LEDs
+  pinMode(FAILSAFE_LED, OUTPUT);
+  digitalWrite(FAILSAFE_LED, LOW); // Começa apagado
+
   // Pinos dos motores
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
@@ -265,5 +271,22 @@ void setup()
 
 void loop()
 {
-  // Tudo sendo controlado por callback
+  // Verifica se o controle ainda está conectado
+  if (PS4.isConnected())
+  {
+    digitalWrite(FAILSAFE_LED, HIGH); // Tudo OK
+  }
+  else
+  {
+    digitalWrite(FAILSAFE_LED, LOW); // FALHA: Controle desconectado
+    stopRobot();                     // Para o robô como medida de segurança
+    if (isWeaponActive)
+    {
+      isWeaponActive = false;
+
+      // Arma completamente parada (ambos os lados do motor em LOW)
+      digitalWrite(WEAPON_PIN, LOW);
+      digitalWrite(WEAPON_PIN2, LOW);
+    }
+  }
 }
